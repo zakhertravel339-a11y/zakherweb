@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Cairo:wght@400;500;600;700;900&family=Noto+Sans:wght@400;500;700&display=swap&subset=latin,latin-ext,cyrillic,cyrillic-ext,arabic');
+
+:root {
+  --font-latin: 'Roboto', 'Noto Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-arabic: 'Cairo', 'Noto Sans Arabic', 'Tahoma', 'Segoe UI', sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-latin);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+h1, h2, h3, h4, h5, h6,
+p, span, a, li, td, th, dt, dd, label, button, input, textarea, select, option, blockquote, figcaption {
+  font-family: var(--font-latin);
+}
+
+html[lang="ar"] body,
+html[dir="rtl"] body,
+html[lang="ar"] h1, html[lang="ar"] h2, html[lang="ar"] h3,
+html[lang="ar"] h4, html[lang="ar"] h5, html[lang="ar"] h6,
+html[lang="ar"] p, html[lang="ar"] span, html[lang="ar"] a,
+html[lang="ar"] li, html[lang="ar"] td, html[lang="ar"] th,
+html[lang="ar"] dt, html[lang="ar"] dd, html[lang="ar"] label,
+html[lang="ar"] button, html[lang="ar"] input, html[lang="ar"] textarea,
+html[lang="ar"] select, html[lang="ar"] option, html[lang="ar"] blockquote,
+html[lang="ar"] figcaption,
+html[dir="rtl"] h1, html[dir="rtl"] h2, html[dir="rtl"] h3,
+html[dir="rtl"] h4, html[dir="rtl"] h5, html[dir="rtl"] h6,
+html[dir="rtl"] p, html[dir="rtl"] span, html[dir="rtl"] a,
+html[dir="rtl"] li, html[dir="rtl"] td, html[dir="rtl"] th,
+html[dir="rtl"] dt, html[dir="rtl"] dd, html[dir="rtl"] label,
+html[dir="rtl"] button, html[dir="rtl"] input, html[dir="rtl"] textarea,
+html[dir="rtl"] select, html[dir="rtl"] option, html[dir="rtl"] blockquote,
+html[dir="rtl"] figcaption {
+  font-family: var(--font-arabic), var(--font-latin);
+}
+
+
+i[class*="fa-"],
+i[class*="fa "],
+.fa, .fas, .far, .fal, .fab, .fad,
+.fa-solid, .fa-regular, .fa-light, .fa-thin, .fa-duotone, .fa-brands,
+[class^="fa-"]::before,
+[class*=" fa-"]::before,
+[class^="fa-"]::after,
+[class*=" fa-"]::after {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "Font Awesome 6 Brands", "FontAwesome", "Font Awesome 5 Free", "Font Awesome 5 Brands" !important;
+}
+
+.fa-brands,
+.fab,
+i.fa-brands,
+i.fab {
+  font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands", "FontAwesome" !important;
+}
+
+html[dir="rtl"] body {
+  direction: rtl;
+  text-align: right;
+}
+
+html[dir="rtl"] section,
+html[dir="rtl"] footer,
+html[dir="rtl"] header,
+html[dir="rtl"] main,
+html[dir="rtl"] article {
+  text-align: right;
+}
+
+html[dir="rtl"] .navbar ul,
+html[dir="rtl"] .bar-menu ul,
+html[dir="rtl"] footer .lists ul {
+  padding-right: 0;
+  padding-inline-start: 0;
+}
+
+html[dir="rtl"] footer .lists li a i {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+html[dir="rtl"] nav img {
+  margin-right: 30px;
+  margin-left: auto;
+}
+
+html[dir="rtl"] .navbar ul li,
+html[dir="rtl"] .bar-menu ul li {
+  text-align: center;
+}
+
+html[dir="rtl"] .header-icons {
+  margin-right: 60px !important;
+  margin-left: -100px !important;
+}
+
+html[dir="rtl"] .languages ul,
+html[lang="ar"] .languages ul {
+  left: auto;
+  right: 0;
+  direction: ltr;
+  text-align: center;
+  display: none;
+  width: 55px;
+  padding-left: 14px;
+  padding-right: 14px;
+  list-style: none;
+}
+
+html[dir="rtl"] .languages ul.open,
+html[lang="ar"] .languages ul.open {
+  display: block;
+}
+
+html[dir="rtl"] .languages ul li,
+html[lang="ar"] .languages ul li {
+  display: block;
+  width: 100%;
+  text-align: center;
+  float: none;
+  padding: 0;
+  margin: 0;
+}
+
+html[dir="rtl"] .languages ul li a,
+html[lang="ar"] .languages ul li a {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 6px 0;
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+
+html[dir="rtl"] .caption-title span:before,
+html[dir="rtl"] .caption-title span:after {
+  display: none;
+}
+
+html[dir="rtl"] .swiper,
+html[dir="rtl"] .swiper-wrapper {
+  direction: ltr;
+}
+
+html[dir="rtl"] .swiper-slide {
+  direction: rtl;
+}
+
+input, textarea, select, button {
+  font-family: inherit;
+}
+
+html[dir="rtl"] .contact-content .ms-3,
+html[lang="ar"] .contact-content .ms-3,
+html[dir="rtl"] .contact-content .ms-2,
+html[lang="ar"] .contact-content .ms-2,
+html[dir="rtl"] .contact-content .ms-4,
+html[lang="ar"] .contact-content .ms-4,
+html[dir="rtl"] .contact-content .ms-5,
+html[lang="ar"] .contact-content .ms-5 {
+  margin-left: 0 !important;
+  margin-right: 1.25rem !important;
+}
+
+html[dir="rtl"] .contact-content .d-flex,
+html[lang="ar"] .contact-content .d-flex {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+html[dir="rtl"] .contact-content .d-flex > .ms-3,
+html[lang="ar"] .contact-content .d-flex > .ms-3 {
+  margin-right: 1.25rem !important;
+  margin-left: 0 !important;
+}
+
+html[dir="rtl"] .contact-content .d-flex .flex-shrink-0,
+html[lang="ar"] .contact-content .d-flex .flex-shrink-0 {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
