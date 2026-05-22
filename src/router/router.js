@@ -357,11 +357,4 @@ const router = createRouter({
     }
 })
 
-
-router.afterEach((to) => {
-
-})
-
 export default router
-
-

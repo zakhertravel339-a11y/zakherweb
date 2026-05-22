@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+Disallow: /confirm
+Disallow: /reservation
+Disallow: /adminpage
+Disallow: /api/
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://zakher.travel/sitemap.xml
+
+Host: zakher.travel

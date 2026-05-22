@@ -6,6 +6,7 @@ import router from './router/router.js'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import i18nPlugin from './plugins/i18n.js'
+import seoPlugin from './plugins/seo.js'
 import domTranslator, { translateNow } from './plugins/domTranslator.js'
 import { useI18nStore } from './store/i18nStore.js'
 
@@ -13,6 +14,7 @@ const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 app.use(router)
+app.use(seoPlugin, { router })
 app.use(i18nPlugin, { pinia })
 app.use(domTranslator, { router, pinia })
 
