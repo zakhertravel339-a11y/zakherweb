@@ -203,6 +203,8 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900&display=swap');
 header {
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   position: fixed;
   top: 0;
   left: 0;
@@ -212,9 +214,11 @@ header {
 
 nav {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 20px 20px 10px;
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   position: fixed;
   top: 0;
@@ -242,6 +246,7 @@ nav {
 }
 .no-scroll {
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .search-item {
@@ -299,15 +304,18 @@ nav {
 
 nav .bar-icon i{
   font-size: 27px;
-  margin: 0px 30px;
+  margin: 0;
   color: rgb(60, 59, 59);
 }
 nav .bar-icon .burger-btn {
   border: none;
   background: transparent;
-  padding: 0;
+  padding: 8px;
   cursor: pointer;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 nav .bar-icon{
   display: none;
@@ -315,11 +323,10 @@ nav .bar-icon{
 }
 
 nav .menu {
-  width: 100vw;
+  width: 100%;
   height: 100%;
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   background: linear-gradient(321deg, rgba(249, 147, 47, 1) 0%, rgba(251, 178, 64, 1) 64%, rgba(255, 218, 87, 1) 100%);
   color: #FFF;
   z-index: 10000;
@@ -469,8 +476,8 @@ nav .navbar li a {
 
 
 nav .bar-icon{
-  margin-right: -55px;
-  margin-top: 15px;
+  margin: 0;
+  flex-shrink: 0;
 }
 
 nav .menu ul li a{
@@ -648,29 +655,40 @@ nav .menu ul li a{
   .languages ul {
     top: 28px;
   }
-  nav .bar-icon {
-    display: block;
-    position: absolute;
-    top: 3rem;
-    right: 1.5rem;
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 1001;
-  }
+
   nav {
-    justify-content: flex-start !important;
-    padding-left: 30px;
-    position: fixed;
+    justify-content: space-between !important;
+    align-items: center;
+    padding: 10px 16px;
+    min-height: 72px;
   }
 
-  nav img{
-    width: 80px;
-    padding-top:20px;
-    margin-left: -10px;
+  nav .bar-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: static;
+    order: 2;
+    margin: 0;
+    top: auto;
+    right: auto;
   }
-  nav .navbar{
+
+  nav .bar-icon i {
+    font-size: 24px;
+  }
+
+  nav img {
+    order: 1;
+    width: auto;
+    height: 56px;
+    max-width: calc(100% - 56px);
+    padding-top: 0;
+    margin: 0;
+  }
+
+  nav .navbar {
     display: none;
-    justify-content: flex-start;
   }
 
 
@@ -819,29 +837,30 @@ nav .menu ul li a{
   }
 
   nav {
-    justify-content: flex-start !important;
-    padding-left: 30px;
+    justify-content: space-between !important;
+    align-items: center;
+    padding: 10px 20px;
     position: fixed;
   }
 
   nav img {
-    width: 100px;
-    padding-top: 20px;
+    width: auto;
+    height: 64px;
+    padding-top: 0;
+    margin: 0;
   }
 
   nav .navbar {
     display: none;
-    justify-content: flex-start;
   }
 
   nav .bar-icon {
-    display: block;
-    position: absolute;
-    top: 3rem;
-    right: 4.5rem;
-    font-size: 1.8rem;
-    cursor: pointer;
-    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: static;
+    order: 2;
+    margin: 0;
   }
 
   .bar-menu .search,
@@ -954,6 +973,12 @@ nav .menu ul li a{
     background-color: #FFA500;
     border: none;
     font-size: 20px;
+  }
+}
+
+@media (min-width: 1025px) {
+  nav {
+    justify-content: space-around;
   }
 }
 
