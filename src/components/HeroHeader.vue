@@ -2,7 +2,7 @@
 
   
 
-  <div class="container-fluid bg-primary py-5  hero-header" >
+  <div class="container-fluid bg-primary py-5  hero-header" data-no-translate>
 
     <div class="container py-5">
 

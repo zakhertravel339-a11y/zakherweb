@@ -13,7 +13,7 @@ const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 app.use(router)
-app.use(i18nPlugin)
+app.use(i18nPlugin, { pinia })
 app.use(domTranslator, { router, pinia })
 
 const i18n = useI18nStore(pinia)

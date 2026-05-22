@@ -1,6 +1,8 @@
 import { nextTick } from 'vue'
 import { useI18nStore } from '@/store/i18nStore.js'
 
+const PAGE_CONTENT_ID = 'page-content'
+
 const SKIP_TAGS = new Set([
     'SCRIPT', 'STYLE', 'NOSCRIPT', 'CODE', 'PRE', 'TEXTAREA',
     'OPTION', 'SELECT',
@@ -10,6 +12,10 @@ const SKIP_ATTRS = new Set(['placeholder', 'alt', 'title', 'aria-label'])
 
 const ORIGINAL_TEXT = '__zakherOriginal'
 const ORIGINAL_ATTR_PREFIX = '__zakherOriginalAttr__'
+
+function pageRoot() {
+    return document.getElementById(PAGE_CONTENT_ID)
+}
 
 function shouldSkipNode(node) {
     let parent = node.parentElement
@@ -80,6 +86,7 @@ function restoreOriginals(root) {
         }
     }
     for (const el of getTranslatableElements(root)) {
+        if (el.closest('[data-no-translate]')) continue
         for (const attr of SKIP_ATTRS) {
             const cacheKey = ORIGINAL_ATTR_PREFIX + attr
             if (el[cacheKey] !== undefined) {
@@ -92,8 +99,7 @@ function restoreOriginals(root) {
 function translateNodes(root, dict) {
     if (!root || !dict || !Object.keys(dict).length) return
 
-    const textNodes = getTextNodes(root)
-    for (const node of textNodes) {
+    for (const node of getTextNodes(root)) {
         if (node[ORIGINAL_TEXT] === undefined) {
             node[ORIGINAL_TEXT] = node.nodeValue
         }
@@ -108,6 +114,7 @@ function translateNodes(root, dict) {
     }
 
     for (const el of getTranslatableElements(root)) {
+        if (el.closest('[data-no-translate]')) continue
         for (const attr of SKIP_ATTRS) {
             if (!el.hasAttribute(attr)) continue
             const cacheKey = ORIGINAL_ATTR_PREFIX + attr
@@ -129,27 +136,27 @@ function translateNodes(root, dict) {
 let observer = null
 let pending = null
 let lastDict = null
-const root = () => document.getElementById('app') || document.body
 
 function scheduleTranslate(dict, restore = false) {
     lastDict = dict
     if (pending) cancelAnimationFrame(pending)
     pending = requestAnimationFrame(() => {
         pending = null
-        const r = root()
-        if (!r || !lastDict) return
-        if (restore) restoreOriginals(r)
-        translateNodes(r, lastDict)
+        const root = pageRoot()
+        if (!root || !lastDict) return
+        if (restore) restoreOriginals(root)
+        translateNodes(root, lastDict)
     })
 }
 
 function startObserver() {
     if (observer) observer.disconnect()
+    const root = pageRoot()
+    if (!root) return
     observer = new MutationObserver(() => {
         if (lastDict) scheduleTranslate(lastDict)
     })
-    const r = root()
-    if (r) observer.observe(r, { childList: true, subtree: true, characterData: true })
+    observer.observe(root, { childList: true, subtree: true, characterData: true })
 }
 
 function runTranslate(store, restore = false) {
@@ -168,7 +175,9 @@ export default {
         const store = pinia ? useI18nStore(pinia) : useI18nStore()
 
         store.$subscribe((_mutation, state) => {
-            nextTick(() => runTranslate({ messages: state.messages }, true))
+            nextTick(() => {
+                nextTick(() => runTranslate({ messages: state.messages }, true))
+            })
         })
 
         if (router) {

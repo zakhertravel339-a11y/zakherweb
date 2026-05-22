@@ -51,7 +51,7 @@ onMounted(() => {
 
 
 
-  <div class="membership">
+  <div class="membership" data-no-translate>
     <h2 style="font-size: 40px; font-weight: 800; text-align: center; margin-top: 40px;">
       <div class="gradient-circle"></div> {{ $t('home.members.title', 'We Are Members Of') }}
       <div class="gradient-circle"></div>

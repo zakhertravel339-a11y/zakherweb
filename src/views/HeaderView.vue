@@ -1,6 +1,6 @@
 <template>
     
-  <header>
+  <header data-no-translate>
 
 
 

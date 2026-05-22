@@ -1,6 +1,6 @@
 <template>
 
-  <section id="branch-slider">
+  <section id="branch-slider" data-no-translate>
     <h2 style="margin-top: 50px">{{ $t('home.branches.title', 'OUR BRANCHES') }}</h2>
     <hr />
     <div class="wrapper">

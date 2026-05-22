@@ -4,7 +4,7 @@
 
 <template>
   
-  <section id="service">
+  <section id="service" data-no-translate>
     <h1>{{ $t('home.why.title', 'WHY CHOOSE US?') }}</h1>
     <hr>
     <div class="items">

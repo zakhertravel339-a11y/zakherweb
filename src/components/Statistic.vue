@@ -40,7 +40,7 @@ onMounted(() => {
 
 <template>
   
-  <section id="counters" style="width: 100%;">
+  <section id="counters" style="width: 100%;" data-no-translate>
     <h2>{{ $t('home.stats.title', 'STATISTICS') }}</h2>
     <hr>
     <div class="counter">

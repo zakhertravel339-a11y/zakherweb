@@ -1,7 +1,9 @@
 <template>
-  <header-view></header-view>
-  <router-view/>
-  <footer-view></footer-view>
+  <header-view />
+  <main id="page-content">
+    <router-view />
+  </main>
+  <footer-view />
 </template>
 
 <script setup>

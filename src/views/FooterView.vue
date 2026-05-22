@@ -1,6 +1,6 @@
 <template>
   
-  <footer>
+  <footer data-no-translate>
     <div class="footer-menu">
       <div class="lists">
         <div class="item contact">

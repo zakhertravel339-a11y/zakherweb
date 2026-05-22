@@ -1,7 +1,7 @@
 <template>
   
 
-  <div class="slider">
+  <div class="slider" data-no-translate>
     <div class="slides">
       <div class="slide" v-for="n in 4" :key="n">
         <div class="tg-container">
