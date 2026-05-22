@@ -8,33 +8,33 @@
 
       <div class="bar-icon">
 
-        <button style="border: none; background-color: transparent;" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
-
-
+        <button type="button" class="burger-btn" aria-label="Open menu" @click="openMobileMenu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
 
       </div>
 
       <img src="https://www.zakher.travel/wp-content/uploads/2019/11/cropped-Webp.net-resizeimage.png" alt="">
 
-      <div class="menu">
+      <div class="menu" :class="{ active: mobileMenuOpen }">
 
-        <i class="fa-solid fa-xmark"></i>
+        <i class="fa-solid fa-xmark" role="button" aria-label="Close menu" @click="closeMobileMenu"></i>
 
         <div class="bar-menu">
 
           <ul>
-            <li><router-link to="/">{{ $t('header.menu.home', 'HOME') }}</router-link></li>
-            <li><router-link to="/about-us">{{ $t('header.menu.about', 'ABOUT US') }}</router-link></li>
+            <li><router-link to="/" @click="closeMobileMenu">{{ $t('header.menu.home', 'HOME') }}</router-link></li>
+            <li><router-link to="/about-us" @click="closeMobileMenu">{{ $t('header.menu.about', 'ABOUT US') }}</router-link></li>
 
-            <li><router-link to="/ourbranches">{{ $t('header.menu.branches', 'OUR BRANCHES') }}</router-link></li>
+            <li><router-link to="/ourbranches" @click="closeMobileMenu">{{ $t('header.menu.branches', 'OUR BRANCHES') }}</router-link></li>
 
-            <li><router-link to="/ourservices">{{ $t('header.menu.services', 'SERVICES') }}</router-link></li>
+            <li><router-link to="/ourservices" @click="closeMobileMenu">{{ $t('header.menu.services', 'SERVICES') }}</router-link></li>
 
-            <li><router-link to="/tour-packages">{{ $t('header.menu.tours', 'TOUR PACKAGES') }}</router-link></li>
+            <li><router-link to="/tour-packages" @click="closeMobileMenu">{{ $t('header.menu.tours', 'TOUR PACKAGES') }}</router-link></li>
 
-            <li><router-link to="/social-media">{{ $t('header.menu.social', 'SOCIAL MEDIA') }}</router-link></li>
+            <li><router-link to="/social-media" @click="closeMobileMenu">{{ $t('header.menu.social', 'SOCIAL MEDIA') }}</router-link></li>
 
-            <li><router-link to="/contact-us">{{ $t('header.menu.contact', 'CONTACT US') }}</router-link></li>
+            <li><router-link to="/contact-us" @click="closeMobileMenu">{{ $t('header.menu.contact', 'CONTACT US') }}</router-link></li>
 
           </ul>
 
@@ -138,171 +138,69 @@
 
 </template>
 
-<script setup>import { ref, onMounted, onUnmounted } from "vue";
+<script setup>
+import { ref, onMounted, onUnmounted } from "vue";
 import { useI18nStore, SUPPORTED_LANGUAGES } from "@/store/i18nStore.js";
 
 const i18n = useI18nStore();
 const languages = SUPPORTED_LANGUAGES;
 const langMenuOpen = ref(false);
 const langMenuDesktopOpen = ref(false);
+const mobileMenuOpen = ref(false);
+
+function openMobileMenu() {
+  mobileMenuOpen.value = true;
+  document.body.classList.add("no-scroll");
+}
+
+function closeMobileMenu() {
+  mobileMenuOpen.value = false;
+  document.body.classList.remove("no-scroll");
+}
 
 function toggleLangMenu(e) {
   e?.stopPropagation();
   langMenuOpen.value = !langMenuOpen.value;
 }
+
 function toggleLangMenuDesktop(e) {
   e?.stopPropagation();
   langMenuDesktopOpen.value = !langMenuDesktopOpen.value;
 }
+
 async function changeLanguage(code) {
   langMenuOpen.value = false;
   langMenuDesktopOpen.value = false;
   await i18n.setLanguage(code);
 }
 
+function onDocumentClick() {
+  langMenuOpen.value = false;
+  langMenuDesktopOpen.value = false;
+}
+
+function onScroll() {
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+  nav.style.position = window.scrollY >= 47 ? "fixed" : "";
+}
+
 onMounted(() => {
-  document.addEventListener("click", () => {
-    langMenuOpen.value = false;
-    langMenuDesktopOpen.value = false;
-  });
+  document.addEventListener("click", onDocumentClick);
+  window.addEventListener("scroll", onScroll);
 });
 
-document.querySelectorAll(".pagination div").forEach(function (p, index) {
-  p.addEventListener("click", function () {
-    $("header img").css("display", "none")
-    $(".slide-text h1").css("animation-name", "")
-    $(".slide-text p").css("animation-name", "")
-    document.querySelectorAll(".pagination div").forEach(function (a) {
-      a.classList.remove("pag-active")
-    })
-    document.querySelectorAll(".pagination div span").forEach(function (b) {
-      b.classList.remove("span-active")
-    })
-    i = index
-    $("header img").attr("src", `./image/${baza[i]}`)
-    $("header .slide-text h1").text(text[i])
-    p.classList.add("pag-active")
-    $("header img").fadeIn(300)
-    $(".slide-text h1").css("animation-name", "slideH1")
-    $(".slide-text p").css("animation-name", "slideP")
-  })
-})
-window.addEventListener("scroll", function () {
-  if (window.scrollY >= 47) {
-    document.querySelector("nav").style.position = "fixed";
-  } else {
-    document.querySelector("nav").style.position = "";
-  }
+onUnmounted(() => {
+  document.removeEventListener("click", onDocumentClick);
+  window.removeEventListener("scroll", onScroll);
+  document.body.classList.remove("no-scroll");
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-  const barIcon = document.querySelector("nav .bar-icon");
-  const menu = document.querySelector("nav .menu");
-  const closeIcon = document.querySelector("nav .menu .fa-xmark");
-
-  barIcon.addEventListener("click", () => menu.style.display = "block");
-  closeIcon.addEventListener("click", () => menu.style.display = "none");
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const searchButtons = document.querySelectorAll(".search");
-  const searchBox = document.querySelector(".search-item");
-  const closeBtn = document.querySelector(".search-item .fa-xmark");
-  const menu = document.querySelector(".menu"); 
-
-  if (!searchBox || !closeBtn) return;
-
-  
-  searchButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-
-      
-      if (menu && menu.classList.contains("active")) {
-        menu.classList.remove("active");
-        document.body.classList.remove("no-scroll");
-      }
-
-      searchBox.style.display = "block";
-      document.body.classList.add("no-scroll");
-    });
-  });
-
-  
-  closeBtn.addEventListener("click", () => {
-    searchBox.style.display = "none";
-    document.body.classList.remove("no-scroll");
-  });
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const menu = document.querySelector(".menu");
-  const closeIcon = document.querySelector(".menu > i");
-  const barBtn = document.querySelector(".bar-icon button"); 
-
-  if (menu && closeIcon && barBtn) {
-    function openMenu() {
-      menu.classList.add("active");
-      document.body.classList.add("no-scroll");
-    }
-
-    function closeMenu() {
-      menu.classList.remove("active");
-      document.body.classList.remove("no-scroll");
-    }
-
-    
-    barBtn.addEventListener("click", openMenu);
-
-    
-    closeIcon.addEventListener("click", closeMenu);
-  }
-});
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const menu = document.querySelector(".menu");
-  const menuLinks = document.querySelectorAll(".menu a"); 
-  const barBtn = document.querySelector(".bar-icon button");
-  const closeIcon = document.querySelector(".menu > i");
-
-  function closeMenu() {
-    menu.classList.remove("active");
-    document.body.classList.remove("no-scroll");
-  }
-
-  
-  if (closeIcon) {
-    closeIcon.addEventListener("click", closeMenu);
-  }
-
-  
-  if (barBtn) {
-    barBtn.addEventListener("click", () => {
-      menu.classList.add("active");
-      document.body.classList.add("no-scroll");
-    });
-  }
-
-  
-  menuLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      closeMenu();
-    });
-  });
-});
-
-
-
-
-
 </script>
 
 <style scoped>
 
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Slab:wght@300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900&display=swap');
 header {
   width: 100%;
   position: fixed;
@@ -403,6 +301,13 @@ nav .bar-icon i{
   font-size: 27px;
   margin: 0px 30px;
   color: rgb(60, 59, 59);
+}
+nav .bar-icon .burger-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
 }
 nav .bar-icon{
   display: none;

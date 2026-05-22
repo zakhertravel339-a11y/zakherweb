@@ -1,74 +1,54 @@
 <script setup>
-
+const serviceItems = [
+  {
+    titleKey: 'Tourist services',
+    titleFallback: 'Tourist services',
+    bodyKey:
+      'Honeymoon packages; Private and shuttle transfers, tours; VIP welcoming; Group packages; Guide; Air tickets; Hotels booking; Visas; Travel insurance; Off road tours; Hunting tours; Helicopter tours; Golf tour package.',
+    bodyFallback:
+      'Honeymoon packages; Private and shuttle transfers, tours; VIP welcoming; Group packages; Guide; Air tickets; Hotels booking; Visas; Travel insurance; Off road tours; Hunting tours; Helicopter tours; Golf tour package.',
+  },
+  {
+    titleKey: 'Real estate services',
+    titleFallback: 'Real estate services',
+    bodyKey:
+      'We provide assistance in a range of real estate services in Azerbaijan, starting from selling and renting private and commercial real estate, and providing legal advice with help of lawyers accredited by embassies.',
+    bodyFallback:
+      'We provide assistance in a range of real estate services in Azerbaijan, starting from selling and renting private and commercial real estate, and providing legal advice with help of lawyers accredited by embassies.',
+  },
+  {
+    titleKey: 'Medical Services',
+    titleFallback: 'Medical Services',
+    bodyKey:
+      'We offer therapeutic, cosmetic and natural services, as we offer complete treatment trip programs that include transportation, accommodation, arranging appointments and reservations with the best doctors and clinics.',
+    bodyFallback:
+      'We offer therapeutic, cosmetic and natural services, as we offer complete treatment trip programs that include transportation, accommodation, arranging appointments and reservations with the best doctors and clinics.',
+  },
+  {
+    titleKey: 'Meetings, Incentives, Conferences and Exhibitions (MICE)',
+    titleFallback: 'Meetings, Incentives, Conferences and Exhibitions (MICE)',
+    bodyKey: 'Services for organizing various private, public, official events.',
+    bodyFallback: 'Services for organizing various private, public, official events.',
+  },
+];
 </script>
 
 <template>
   <div class="services2">
 
-    <h2 class="title-service2">Our Services</h2>
+    <h2 class="title-service2">{{ $t('Our Services', 'Our Services') }}</h2>
 
     <hr>
 
     <div class="services2-box" style="background-color: #002D70;">
 
-      <div class="service2-box">
+      <div v-for="(item, index) in serviceItems" :key="item.titleKey" class="service2-box">
 
-        <div class="circle2">01</div>
+        <div class="circle2">{{ String(index + 1).padStart(2, '0') }}</div>
 
-        <div class="text ">
-
-          <b>Tourist services</b>
-
-          Honeymoon packages; Private and shuttle transfers, tours; VIP welcoming; Group packages; Guide; Air tickets; Hotels booking; Visas; Travel insurance; Off road tours; Hunting tours; Helicopter tours; Golf tour package.
-
-        </div>
-
-      </div>
-
-
-
-      <div class="service2-box">
-
-        <div class="circle2">02</div>
-
-        <div class="text ">
-
-          <b>Real estate services</b>
-
-          We provide assistance in a range of real estate services in Azerbaijan, starting from selling and renting private and commercial real estate, and providing legal advice with help of lawyers accredited by embassies.
-
-        </div>
-
-      </div>
-
-
-
-      <div class="service2-box">
-
-        <div class="circle2">03</div>
-
-        <div class="text">
-
-          <b>Medical Services</b>
-
-          We offer therapeutic, cosmetic and natural services, as we offer complete treatment trip programs that include transportation, accommodation, arranging appointments and reservations with the best doctors and clinics.
-
-        </div>
-
-      </div>
-
-
-
-      <div class="service2-box">
-
-        <div class="circle2">04</div>
-
-        <div class="text">
-
-          <b>Meetings, Incentives, Conferences and Exhibitions (MICE)</b>
-
-          Services for organizing various private, public, official events.
-
+        <div class="service-text">
+          <strong class="service-text-title">{{ $t(item.titleKey, item.titleFallback) }}</strong>
+          {{ $t(item.bodyKey, item.bodyFallback) }}
         </div>
 
       </div>
@@ -86,8 +66,8 @@
   color: #FFA500;
   font-size: 35px;
   text-align: center!important;
-  font-weight: 600;
   margin-top: 20px;
+  font-family: var(--font-latin);
 }
 
 .services2 hr{
@@ -129,19 +109,24 @@
   color: white;
   margin-right: 20px;
   flex-shrink: 0;
+  font-family: var(--font-latin);
 }
 
-.text {
+.service-text {
   color: white;
   text-align: start;
+  font-family: var(--font-latin);
+  font-weight: 400;
+  line-height: 1.6;
 }
 
-.text b {
+.service-text-title {
   color: #ff7700;
   display: block;
   margin-bottom: 10px;
   font-size: 18px;
-
+  font-weight: 700;
+  font-family: inherit;
 }
 
 @media (max-width: 768px) {
@@ -156,7 +141,7 @@
     margin: auto;
   }
 
-  .text{
+  .service-text{
     text-align: center;
     margin-top: 10px;
   }
