@@ -176,32 +176,27 @@ input, textarea, select, button {
   font-family: inherit;
 }
 
-html[dir="rtl"] .contact-content .ms-3,
-html[lang="ar"] .contact-content .ms-3,
-html[dir="rtl"] .contact-content .ms-2,
-html[lang="ar"] .contact-content .ms-2,
-html[dir="rtl"] .contact-content .ms-4,
-html[lang="ar"] .contact-content .ms-4,
-html[dir="rtl"] .contact-content .ms-5,
-html[lang="ar"] .contact-content .ms-5 {
-  margin-left: 0 !important;
-  margin-right: 1.25rem !important;
+.contact-content .contact-info-row {
+  gap: 1rem;
+  align-items: flex-start;
 }
 
-html[dir="rtl"] .contact-content .d-flex,
-html[lang="ar"] .contact-content .d-flex {
-  flex-direction: row-reverse;
+.contact-content .contact-info-icon {
+  flex-shrink: 0;
+}
+
+.contact-content .contact-info-text {
+  flex: 1;
+  min-width: 0;
+}
+
+html[dir="rtl"] .contact-content .contact-info-row,
+html[lang="ar"] .contact-content .contact-info-row {
+  flex-direction: row;
   text-align: right;
 }
 
-html[dir="rtl"] .contact-content .d-flex > .ms-3,
-html[lang="ar"] .contact-content .d-flex > .ms-3 {
-  margin-right: 1.25rem !important;
-  margin-left: 0 !important;
-}
-
-html[dir="rtl"] .contact-content .d-flex .flex-shrink-0,
-html[lang="ar"] .contact-content .d-flex .flex-shrink-0 {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+html[dir="rtl"] .contact-content .contact-info-text,
+html[lang="ar"] .contact-content .contact-info-text {
+  text-align: right;
 }

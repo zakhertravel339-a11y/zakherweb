@@ -92,10 +92,17 @@ export const useI18nStore = defineStore('i18n', () => {
     function t(key, fallback) {
         if (!key) return fallback ?? ''
         const value = messages.value[key]
-        if (value === undefined || value === null || value === '') {
-            return fallback !== undefined ? fallback : key
+        if (value !== undefined && value !== null && value !== '') {
+            return value
         }
-        return value
+        if (fallback !== undefined && fallback !== '') {
+            const byEnglish = messages.value[fallback]
+            if (byEnglish !== undefined && byEnglish !== null && byEnglish !== '') {
+                return byEnglish
+            }
+            return fallback
+        }
+        return key
     }
 
     return {

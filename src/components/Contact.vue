@@ -19,15 +19,15 @@
 
         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
 
-          <div class="d-flex align-items-center mb-4">
+          <div class="d-flex align-items-start mb-4 contact-info-row">
 
-            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary" style="width: 50px; height: 50px; background-color:#FFA500!important;margin-bottom: 140px;">
+            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary contact-info-icon" style="width: 50px; height: 50px; background-color:#FFA500!important;">
 
               <i class="fa fa-map-marker-alt text-white" ></i>
 
             </div>
 
-            <div class="ms-3">
+            <div class="contact-info-text">
 
               <h5 class="text-primary" style="color: #FFA500!important;">Office</h5>
 
@@ -43,15 +43,15 @@
 
           </div>
 
-          <div class="d-flex align-items-center mb-4">
+          <div class="d-flex align-items-start mb-4 contact-info-row">
 
-            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary" style="width: 50px; height: 50px;background-color: #FFA500!important;">
+            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary contact-info-icon" style="width: 50px; height: 50px;background-color: #FFA500!important;">
 
               <i class="fa fa-phone-alt text-white" ></i>
 
             </div>
 
-            <div class="ms-3">
+            <div class="contact-info-text">
 
               <h5 class="text-primary" style="color: #FFA500!important;">Office Phone</h5>
 
@@ -63,15 +63,15 @@
 
           </div>
 
-          <div class="d-flex align-items-center mb-4">
+          <div class="d-flex align-items-start mb-4 contact-info-row">
 
-            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary" style="width: 50px; height: 50px;background-color: #FFA500!important;">
+            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary contact-info-icon" style="width: 50px; height: 50px;background-color: #FFA500!important;">
 
               <i class="fa fa-phone-alt text-white"></i>
 
             </div>
 
-            <div class="ms-3">
+            <div class="contact-info-text">
 
               <h5 class="text-primary" style="color: #FFA500!important;">Mobile</h5>
 
@@ -87,15 +87,15 @@
 
           </div>
 
-          <div class="d-flex align-items-center mb-4">
+          <div class="d-flex align-items-start mb-4 contact-info-row">
 
-            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary" style="width: 50px; height: 50px;background-color: #FFA500!important;">
+            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary contact-info-icon" style="width: 50px; height: 50px;background-color: #FFA500!important;">
 
               <i class="fa fa-phone-alt text-white"></i>
 
             </div>
 
-            <div class="ms-3">
+            <div class="contact-info-text">
 
               <h5 class="text-primary"style="color: #FFA500!important;">Whatsapp</h5>
 
@@ -111,15 +111,15 @@
 
 
 
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-start contact-info-row">
 
-            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary" style="width: 50px; height: 50px;background-color: #FFA500!important;">
+            <div class="d-flex align-items-center justify-content-center flex-shrink-0 bg-primary contact-info-icon" style="width: 50px; height: 50px;background-color: #FFA500!important;">
 
               <i class="fa fa-envelope-open text-white"></i>
 
             </div>
 
-            <div class="ms-3">
+            <div class="contact-info-text">
 
               <h5 class="text-primary" style="color: #FFA500!important;">Email</h5>
 
