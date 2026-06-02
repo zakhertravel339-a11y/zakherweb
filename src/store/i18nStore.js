@@ -4,6 +4,9 @@ import apiClient from '@/api/client.js'
 import autoTranslations from '@/assets/auto_translations.json'
 
 const STORAGE_KEY = 'zakher.language'
+const CACHE_PREFIX = 'zakher.i18n.cache.'
+const CACHE_VERSION = 1
+const CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000
 const DEFAULT_LANGUAGE = 'en'
 
 export const SUPPORTED_LANGUAGES = [
@@ -41,10 +44,38 @@ function buildMessagesDict(source, lang) {
     return out
 }
 
+function readLangCache(lang) {
+    try {
+        const raw = localStorage.getItem(`${CACHE_PREFIX}${lang}`)
+        if (!raw) return null
+        const parsed = JSON.parse(raw)
+        if (parsed?.v !== CACHE_VERSION || !parsed.data) return null
+        if (Date.now() - (parsed.ts || 0) > CACHE_MAX_AGE_MS) return null
+        return parsed.data
+    } catch (_) {
+        return null
+    }
+}
+
+function writeLangCache(lang, apiData) {
+    try {
+        localStorage.setItem(
+            `${CACHE_PREFIX}${lang}`,
+            JSON.stringify({ v: CACHE_VERSION, data: apiData, ts: Date.now() }),
+        )
+    } catch (_) {
+        /* quota */
+    }
+}
+
 export const useI18nStore = defineStore('i18n', () => {
     const initialLang = readStoredLanguage()
+    const cachedApi = readLangCache(initialLang)
     const language = ref(initialLang)
-    const messages = ref(buildMessagesDict(autoTranslations, initialLang))
+    const messages = ref({
+        ...buildMessagesDict(autoTranslations, initialLang),
+        ...(cachedApi || {}),
+    })
     const ready = ref(true)
     const loading = ref(false)
     const revision = ref(0)
@@ -63,30 +94,48 @@ export const useI18nStore = defineStore('i18n', () => {
         ready.value = true
     }
 
-    async function fetchTranslations(lang = language.value) {
-        loading.value = true
-        applyMessages(lang)
+    async function fetchTranslations(lang = language.value, { background = false } = {}) {
+        const cached = readLangCache(lang)
+        if (cached) {
+            applyMessages(lang, cached)
+            if (!background) loading.value = false
+        } else if (!background) {
+            loading.value = true
+            applyMessages(lang)
+        }
+
         try {
             const { data } = await apiClient.get('/v1/ui/portal/translation/', {
                 headers: { 'X-Language': lang },
             })
             if (data && typeof data === 'object' && Object.keys(data).length > 0) {
                 applyMessages(lang, data)
+                writeLangCache(lang, data)
             }
         } catch (_) {
-            applyMessages(lang)
+            if (!cached) applyMessages(lang)
         } finally {
-            loading.value = false
+            if (!background) loading.value = false
         }
     }
 
     async function setLanguage(lang) {
         if (!SUPPORTED_LANGUAGES.find(l => l.code === lang)) return
+        if (lang === language.value) return
+
         language.value = lang
         try { localStorage.setItem(STORAGE_KEY, lang) } catch (_) {}
         applyHtmlAttrs(lang)
+
+        const cached = readLangCache(lang)
+        if (cached) {
+            applyMessages(lang, cached)
+            void fetchTranslations(lang, { background: true })
+            return
+        }
+
         applyMessages(lang)
-        await fetchTranslations(lang)
+        await fetchTranslations(lang, { background: false })
     }
 
     function t(key, fallback) {

@@ -1,464 +1,171 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import Swiper from 'swiper'
 import { Navigation, EffectFade } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/effect-fade'
+import { fetchPopularTours, getPopularToursInstant } from '@/api/popularTours.js'
+import { useI18nStore } from '@/store/i18nStore.js'
 
+function formatTourText(text) {
+  return String(text || '').replace(/<br\s*\/?>/gi, '\n')
+}
+
+const i18n = useI18nStore()
+const payload = ref(getPopularToursInstant(i18n.language))
+const rootEl = ref(null)
+const activeSlideIndex = ref(0)
+const swiperKey = ref(0)
 let swiperInstance = null
 
-function updateImage(index) {
-  const items = document.querySelectorAll('.product-slider__item')
-  const target = items[index]?.getAttribute('data-target')
+const activeTour = computed(() => payload.value?.tours?.[activeSlideIndex.value] ?? null)
 
-  console.log('slide index:', index, 'target:', target)
-
-  document.querySelectorAll('.product-img__item').forEach((el) => {
-    el.classList.remove('active')
-  })
-
-  if (!target) return
-
-  const activeEl = document.getElementById(target)
-  if (activeEl) {
-    activeEl.classList.add('active')
-  } else {
-    console.warn(`Image element not found: #${target}`)
-  }
+function syncSlide(swiper) {
+  if (!swiper) return
+  activeSlideIndex.value = swiper.realIndex ?? swiper.activeIndex
+  updateNavState(swiper)
 }
 
 function updateNavState(swiper) {
-  const prev = document.querySelector('.prev')
-  const next = document.querySelector('.next')
-
+  const root = rootEl.value
+  if (!root) return
+  const prev = root.querySelector('.prev')
+  const next = root.querySelector('.next')
   if (!prev || !next) return
-
   prev.classList.toggle('disabled', swiper.isBeginning)
   next.classList.toggle('disabled', swiper.isEnd)
 }
 
-onMounted(() => {
-  swiperInstance = new Swiper('.product-slider', {
-    modules: [Navigation, EffectFade],
-    spaceBetween: 30,
-    effect: 'fade',
-    fadeEffect: {
-      crossFade: true
-    },
-    loop: false,
-    speed: 600,
-    navigation: {
-      nextEl: '.next',
-      prevEl: '.prev'
-    },
-    on: {
-      init(swiper) {
-        updateImage(swiper.realIndex)
-        updateNavState(swiper)
-      },
-      slideChange(swiper) {
-        updateImage(swiper.realIndex)
-        updateNavState(swiper)
-      }
-    }
-  })
-
-  updateImage(0)
-  updateNavState(swiperInstance)
-})
-
-onBeforeUnmount(() => {
+function destroySwiper() {
   if (swiperInstance) {
     swiperInstance.destroy(true, true)
     swiperInstance = null
   }
-})
+}
+
+function initSwiper() {
+  destroySwiper()
+  const root = rootEl.value
+  if (!root || !payload.value?.tours?.length) return
+  const el = root.querySelector('.product-slider')
+  if (!el) return
+
+  activeSlideIndex.value = 0
+
+  swiperInstance = new Swiper(el, {
+    modules: [Navigation, EffectFade],
+    slidesPerView: 1,
+    spaceBetween: 30,
+    effect: 'fade',
+    fadeEffect: { crossFade: true },
+    loop: false,
+    speed: 600,
+    watchSlidesProgress: true,
+    navigation: {
+      nextEl: root.querySelector('.next'),
+      prevEl: root.querySelector('.prev'),
+    },
+    on: {
+      init: syncSlide,
+      slideChange: syncSlide,
+      slideChangeTransitionEnd: syncSlide,
+    },
+  })
+}
+
+async function loadTours() {
+  const data = await fetchPopularTours(i18n.language)
+  if (data?.tours?.length) {
+    payload.value = data
+  }
+  activeSlideIndex.value = 0
+  swiperKey.value += 1
+  await nextTick()
+  initSwiper()
+}
+
+function onLanguageChange() {
+  loadTours()
+}
+
+onMounted(loadTours)
+watch(() => i18n.language, onLanguageChange)
+onBeforeUnmount(destroySwiper)
 </script>
 <template>
-  
-  <section id="tour-slider" class="py-4" style="width: 100%;">
+  <section v-if="payload" id="tour-slider" ref="rootEl" class="py-4" style="width: 100%;">
     <div class="container">
-      <h1 class="text-center">MOST POPULAR TOURS</h1>
+      <h1 class="text-center">{{ payload.section_title }}</h1>
       <hr class="mx-auto" style="width: 100px;">
 
-      <section id="trips" class="py-2 mb-5" >
+      <section id="trips" class="py-2 mb-5">
         <div class="container">
-
           <div class="trips-wrapper" style="display:flex; align-items:flex-start; gap:30px; position:relative; min-height:350px;">
-            <div class="common-box" style="
-      position:absolute;
-      top:-80px;
-      left:50%;
-      transform:translateX(-50%);
-      width:70%;
-      background:rgba(169,164,164,0.9);
-      padding:20px;
-      border-radius:12px;
-      text-align:center;
-      color:white;
-      box-shadow:0 4px 12px rgba(0,0,0,0.4);
-      z-index:2;
-      margin-top: 10px;
-  ">
+            <div
+              class="common-box"
+              style="position:absolute; top:-80px; left:50%; transform:translateX(-50%); width:70%; background:rgba(169,164,164,0.9); padding:20px; border-radius:12px; text-align:center; color:white; box-shadow:0 4px 12px rgba(0,0,0,0.4); z-index:2; margin-top: 10px;"
+            >
               <ul style="list-style:none; padding:0; margin:0; font-size:18px; font-weight:600; display:flex; justify-content:space-around; flex-wrap:wrap; gap:15px;">
-                <li>✔ Leisure tourism</li>
-                <li>✔ Golf tourism</li>
-                <li>✔ Medical tourism</li>
-                <li>✔ Hunting tourism</li>
+                <li v-for="(badge, bi) in payload.banner_badges" :key="bi">&#10004; {{ badge }}</li>
               </ul>
             </div>
 
             <div class="wrapper">
               <div class="content">
                 <div class="bg-shape">
-                  <img
-                      src=""
-                      alt=""
-                  />
+                  <img src="" alt="" />
                 </div>
 
                 <div class="product-img">
-                  <div class="product-img__item" id="img1">
+                  <div
+                    v-if="activeTour"
+                    :key="activeTour.id"
+                    class="product-img__item active"
+                  >
                     <img
-                        src="../assets/images/az-ru-tr-paket.png"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-
-                  <div class="product-img__item" id="img2">
-                    <img
-                        src="../assets/images/popular-tour-8.png"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-
-                  <div class="product-img__item" id="img3">
-                    <img
-                        src="../assets/images/turkiye.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-
-                  <div class="product-img__item" id="img4">
-                    <img
-                        src="../assets/images/uzbekistantour.jpeg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img5">
-                    <img
-                        src="../assets/images/kazakhstan-tour.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img6">
-                    <img
-                        src="../assets/images/kyrgyzstan-tour-popular.jpg"
-                        alt="star wars"
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img7">
-                    <img
-                        src="../assets/images/georgia-tour.jpeg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img8">
-                    <img
-                        src="../assets/images/poland-tour.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img9">
-                    <img
-                        src="../assets/images/czech%20republic.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img10">
-                    <img
-                        src="../assets/images/russia%20tour.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img11">
-                    <img
-                        src="../assets/images/uae%20tour.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img12">
-                    <img
-                        src="../assets/images/popular-tour-4.jpg"
-                        alt=""
-                        class="product-img__img"
-                    />
-                  </div>
-                  <div class="product-img__item" id="img13">
-                    <img
-                        src="../assets/images/kyrgyzstan%20tor.png"
-                        alt=""
-                        class="product-img__img"
+                      :src="activeTour.image_url"
+                      :alt="activeTour.title"
+                      class="product-img__img"
+                      loading="eager"
+                      decoding="async"
                     />
                   </div>
                 </div>
 
-                <div class="product-slider swiper">
+                <div :key="swiperKey" class="product-slider swiper">
                   <button class="prev disabled" type="button">
-          <span class="icon">
-            <svg class="icon icon-arrow-right">
-              <use xlink:href="#icon-arrow-left"></use>
-            </svg>
-          </span>
+                    <span class="icon">
+                      <svg class="icon icon-arrow-right">
+                        <use xlink:href="#icon-arrow-left" />
+                      </svg>
+                    </span>
                   </button>
 
                   <button class="next" type="button">
-          <span class="icon">
-            <svg class="icon icon-arrow-right">
-              <use xlink:href="#icon-arrow-right"></use>
-            </svg>
-          </span>
+                    <span class="icon">
+                      <svg class="icon icon-arrow-right">
+                        <use xlink:href="#icon-arrow-right" />
+                      </svg>
+                    </span>
                   </button>
 
                   <div class="product-slider__wrp swiper-wrapper">
-                    <div class="product-slider__item swiper-slide" data-target="img1">
+                    <div
+                      v-for="(tour, idx) in payload.tours"
+                      :key="tour.id"
+                      class="product-slider__item swiper-slide"
+                      :class="{ 'slide-sync-active': idx === activeSlideIndex }"
+                    >
                       <div class="product-slider__card">
-
                         <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            <br />
-                            1 Trip - 3 Countries
-                          </h1>
-                          <span class="product-slider__price">Azerbaijan <br>
-              Turkiye<br>
-              Georgia</span>
-
-
+                          <h1 class="product-slider__title">{{ formatTourText(tour.title) }}</h1>
+                          <span v-if="tour.subtitle" class="product-slider__price">{{ formatTourText(tour.subtitle) }}</span>
+                          <span v-else class="product-slider__price" />
                           <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img2">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            Turkiye tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img3">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                           Turkiye tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img4">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                           Georgia tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="product-slider__item swiper-slide" data-target="img5">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            <br />
-                           Kazakhstan tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img6">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            Czech Republic tours
-                          </h1>
-                          <span class="product-slider__price">$9.999,<sup>99</sup></span>
-
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img7">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                          Georgia tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img8">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            Czech Republic tours
-                          </h1>
-                          <span class="product-slider__price">$9.999,<sup>99</sup></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="product-slider__item swiper-slide" data-target="img9">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            Czech Republic tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="product-slider__item swiper-slide" data-target="img10">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            <br />
-                            HELMET
-                          </h1>
-                          <span class="product-slider__price">$1.299,<sup>99</sup></span>
-
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img11">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                           United Arab Emirates tours
-                          </h1>
-                          <span class="product-slider__price"></span>
-
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img12">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            KYLO REN'S <br />
-                            LIGHTSABER
-                          </h1>
-                          <span class="product-slider__price">$1.699,<sup>99</sup></span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="product-slider__item swiper-slide" data-target="img13">
-                      <div class="product-slider__card">
-
-                        <div class="product-slider__content">
-                          <h1 class="product-slider__title">
-                            1 Trip - 2 Countries
-                          </h1>
-                          <span class="product-slider__price">Kazakhstan<br>
-              Kyrgyzstan</span>
-
-                          <div class="product-slider__bottom">
-                            <button class="product-slider__cart">Read more</button>
-
+                            <router-link :to="tour.link_url" class="product-slider__cart">
+                              {{ tour.button_label }}
+                            </router-link>
                           </div>
                         </div>
                       </div>
@@ -467,36 +174,22 @@ onBeforeUnmount(() => {
                 </div>
               </div>
 
-              <div class="social">
-
-              </div>
+              <div class="social" />
             </div>
 
             <svg class="hidden" hidden>
               <symbol id="icon-arrow-left" viewBox="0 0 32 32">
-                <path
-                    d="M0.704 17.696l9.856 9.856c0.896 0.896 2.432 0.896 3.328 0s0.896-2.432 0-3.328l-5.792-5.856h21.568c1.312 0 2.368-1.056 2.368-2.368s-1.056-2.368-2.368-2.368h-21.568l5.824-5.824c0.896-0.896 0.896-2.432 0-3.328-0.48-0.48-1.088-0.704-1.696-0.704s-1.216 0.224-1.696 0.704l-9.824 9.824c-0.448 0.448-0.704 1.056-0.704 1.696s0.224 1.248 0.704 1.696z"
-                ></path>
+                <path d="M0.704 17.696l9.856 9.856c0.896 0.896 2.432 0.896 3.328 0s0.896-2.432 0-3.328l-5.792-5.856h21.568c1.312 0 2.368-1.056 2.368-2.368s-1.056-2.368-2.368-2.368h-21.568l5.824-5.824c0.896-0.896 0.896-2.432 0-3.328-0.48-0.48-1.088-0.704-1.696-0.704s-1.216 0.224-1.696 0.704l-9.824 9.824c-0.448 0.448-0.704 1.056-0.704 1.696s0.224 1.248 0.704 1.696z" />
               </symbol>
-
               <symbol id="icon-arrow-right" viewBox="0 0 32 32">
-                <path
-                    d="M31.296 14.336l-9.888-9.888c-0.896-0.896-2.432-0.896-3.328 0s-0.896 2.432 0 3.328l5.824 5.856h-21.536c-1.312 0-2.368 1.056-2.368 2.368s1.056 2.368 2.368 2.368h21.568l-5.856 5.824c-0.896 0.896-0.896 2.432 0 3.328 0.48 0.48 1.088 0.704 1.696 0.704s1.216-0.224 1.696-0.704l9.824-9.824c0.448-0.448 0.704-1.056 0.704-1.696s-0.224-1.248-0.704-1.664z"
-                ></path>
+                <path d="M31.296 14.336l-9.888-9.888c-0.896-0.896-2.432-0.896-3.328 0s-0.896 2.432 0 3.328l5.824 5.856h-21.536c-1.312 0-2.368 1.056-2.368 2.368s1.056 2.368 2.368 2.368h21.568l-5.856 5.824c-0.896 0.896-0.896 2.432 0 3.328 0.48 0.48 1.088 0.704 1.696 0.704s1.216-0.224 1.696-0.704l9.824-9.824c0.448-0.448 0.704-1.056 0.704-1.696s-0.224-1.248-0.704-1.664z" />
               </symbol>
             </svg>
-
-
           </div>
         </div>
       </section>
-
-
     </div>
   </section>
-
-
-  
 </template>
 
 <style scoped>
@@ -522,6 +215,16 @@ onBeforeUnmount(() => {
   font-weight: 900;
   margin-bottom: 50px;
   color: white;
+}
+
+.product-slider__title,
+.product-slider__price {
+  white-space: pre-line;
+}
+
+a.product-slider__cart {
+  text-decoration: none;
+  color: inherit;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -737,26 +440,47 @@ a {
   width: 100%;
 }
 
-.product-slider__item.swiper-slide-active .product-slider__content > * {
+.product-slider__item.slide-sync-active {
+  opacity: 1 !important;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.product-slider__item.swiper-slide-active .product-slider__content > *,
+.product-slider__item.slide-sync-active .product-slider__content > * {
   opacity: 1;
   transform: none;
 }
 
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(1) { transition-delay: 0s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(2) { transition-delay: 0.2s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(3) { transition-delay: 0.4s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(4) { transition-delay: 0.6s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(5) { transition-delay: 0.8s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(6) { transition-delay: 1s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(7) { transition-delay: 1.2s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(8) { transition-delay: 1.4s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(9) { transition-delay: 1.6s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(10) { transition-delay: 1.8s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(11) { transition-delay: 2s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(12) { transition-delay: 2.2s; }
-.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(13) { transition-delay: 2.4s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(1),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(1) { transition-delay: 0s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(2),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(2) { transition-delay: 0.2s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(3),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(3) { transition-delay: 0.4s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(4),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(4) { transition-delay: 0.6s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(5),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(5) { transition-delay: 0.8s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(6),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(6) { transition-delay: 1s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(7),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(7) { transition-delay: 1.2s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(8),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(8) { transition-delay: 1.4s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(9),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(9) { transition-delay: 1.6s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(10),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(10) { transition-delay: 1.8s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(11),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(11) { transition-delay: 2s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(12),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(12) { transition-delay: 2.2s; }
+.product-slider__item.swiper-slide-active .product-slider__content > *:nth-child(13),
+.product-slider__item.slide-sync-active .product-slider__content > *:nth-child(13) { transition-delay: 2.4s; }
 
-.product-slider__item.swiper-slide-active circle {
+.product-slider__item.swiper-slide-active circle,
+.product-slider__item.slide-sync-active circle {
   animation: progress 1s ease-out forwards;
   animation-delay: 0.5s;
   opacity: 0.75;
@@ -777,7 +501,10 @@ a {
 
 .product-img__item.active {
   opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  transition-delay: 0.3s;
 }
+
 .product-slider__content {
   color: black;
   padding-top: 1px;
@@ -898,11 +625,6 @@ a {
   transform: translateY(-50%) translateX(-130px);
   opacity: 0;
   transition: all 0.3s;
-}
-
-.product-img__item.active {
-  transform: translateY(-50%) translateX(0);
-  transition-delay: 0.3s;
 }
 
 .product-img__item img {

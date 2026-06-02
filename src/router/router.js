@@ -64,57 +64,57 @@ const routes = [
     {
         path: '/azerbaijan',
         name: 'Azerbaijan',
-        component: () => import('@/views/AzerbaijanView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/turkiye',
         name: 'Turkiye',
-        component: () => import('@/views/TurkiyeView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/kazakhstan',
         name: 'Kazakhstan',
-        component: () => import('@/views/KazakhstanView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/kyrgyzstan',
         name: 'Kyrgyzstan',
-        component: () => import('@/views/KyrgyzstanView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/uzbekistan',
         name: 'Uzbekistan',
-        component: () => import('@/views/UzbekistanView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/georgia',
         name: 'Georgia',
-        component: () => import('@/views/GeorgiaView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/czech-republic',
         name: 'CzechRepublic',
-        component: () => import('@/views/CzechRepublicView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/poland',
         name: 'Poland',
-        component: () => import('@/views/PolandView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/russia',
         name: 'Russia',
-        component: () => import('@/views/RussiaView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/united-arab-emirates',
         name: 'Unoted Arab Emirates',
-        component: () => import('@/views/UnitedArabEmiratesView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
     {
         path: '/ukraine',
         name: 'Ukraine',
-        component: () => import('@/views/UkraineView.vue'),
+        component: () => import('@/views/BranchDetailView.vue'),
     },
 
     {

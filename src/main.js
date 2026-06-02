@@ -19,7 +19,6 @@ app.use(i18nPlugin, { pinia })
 app.use(domTranslator, { router, pinia })
 
 const i18n = useI18nStore(pinia)
-i18n.fetchTranslations(i18n.language).finally(() => {
-    app.mount('#app')
-    translateNow(i18n)
-})
+app.mount('#app')
+translateNow(i18n)
+void i18n.fetchTranslations(i18n.language)
