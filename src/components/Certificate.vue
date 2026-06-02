@@ -1,96 +1,66 @@
 <script setup>
-import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { onMounted, ref } from "vue";
-import SwiperCore from "swiper";
+import { onMounted, ref } from 'vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay } from 'swiper/modules'
+import { fetchCertificates } from '@/api/certificates.js'
+import { getCertificatesFallback } from '@/data/certificatesFallback.js'
+import 'swiper/css'
 
+const modules = [Autoplay]
+const certificates = ref([])
+const activeImage = ref(null)
 
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+onMounted(async () => {
+  const rows = await fetchCertificates()
+  certificates.value = rows.length ? rows : getCertificatesFallback()
+})
 
-SwiperCore.use([Navigation, Pagination, Autoplay]);
+function openLightbox(url) {
+  activeImage.value = url
+}
 
-
-const activeImage = ref(null);
-
-
-onMounted(() => {
-  new SwiperCore(".certificateSwiper", {
-    loop: true,
-    slidesPerView: 3,
-    spaceBetween: 10,
-    autoplay: {
-      delay: 2500,
-      disableOnInteraction: false,
-    },
-    breakpoints: {
-      320: { slidesPerView: 2 },
-      768: { slidesPerView: 2 },
-      1024: { slidesPerView: 3 },
-    },
-  });
-
-  
-  document.querySelectorAll(".certificateSwiper img").forEach((img) => {
-    img.addEventListener("click", () => {
-      activeImage.value = img.src;
-    });
-  });
-
-  
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") activeImage.value = null;
-  });
-});
+function closeLightbox() {
+  activeImage.value = null
+}
 </script>
 
 <template>
-  <div class="certificates">
+  <div v-if="certificates.length" class="certificates">
     <h2>CERTIFICATES</h2>
     <hr />
 
     <div class="container">
-      <div class="swiper certificateSwiper">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="../assets/images/1.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/2.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/3.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/4.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/5.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/6.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/7.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/8.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/9.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/10.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/11.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/12.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/13.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/14.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/15.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/16.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/17.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/18.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/19.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/20.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/certif7.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/certif8.jpg" /></div>
-          <div class="swiper-slide"><img src="../assets/images/certif10.jpg" /></div>
-
-
-        </div>
-      </div>
+      <Swiper
+        class="certificateSwiper"
+        :modules="modules"
+        :loop="certificates.length > 3"
+        :slides-per-view="3"
+        :space-between="10"
+        :autoplay="{ delay: 2500, disableOnInteraction: false }"
+        :breakpoints="{
+          320: { slidesPerView: 2 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        }"
+      >
+        <SwiperSlide v-for="item in certificates" :key="item.id">
+          <img
+            :src="item.image_url"
+            :alt="item.alt_text || 'Certificate'"
+            loading="lazy"
+            @click="openLightbox(item.image_url)"
+          />
+        </SwiperSlide>
+      </Swiper>
     </div>
 
-    
-    <div v-if="activeImage" class="lightbox" @click="activeImage = null">
-      <img :src="activeImage" />
+    <div v-if="activeImage" class="lightbox" @click="closeLightbox">
+      <img :src="activeImage" alt="Certificate preview" />
     </div>
   </div>
 </template>
 
 <style scoped>
-
 .certificates {
   text-align: center;
   margin: 40px auto;
@@ -113,18 +83,16 @@ onMounted(() => {
   border: none;
 }
 
-
 .certificateSwiper {
   height: 350px;
   padding: 40px 0;
 }
 
-.certificateSwiper .swiper-slide {
+.certificateSwiper :deep(.swiper-slide) {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 
 .certificateSwiper img {
   width: 80%;
@@ -133,20 +101,14 @@ onMounted(() => {
   background: #f5f5f5;
   border-radius: 12px;
   cursor: zoom-in;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .certificateSwiper img:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
-
-.swiper-pagination {
-  display: none !important;
-}
-
 
 @media (max-width: 768px) {
   .certificateSwiper img {
@@ -154,7 +116,6 @@ onMounted(() => {
     height: 200px;
   }
 }
-
 
 .lightbox {
   position: fixed;
@@ -184,5 +145,4 @@ onMounted(() => {
     opacity: 1;
   }
 }
-
 </style>

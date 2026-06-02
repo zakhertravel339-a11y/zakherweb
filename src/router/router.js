@@ -62,62 +62,6 @@ const routes = [
         component: () => import('@/views/AboutBranchView.vue'),
     },
     {
-        path: '/azerbaijan',
-        name: 'Azerbaijan',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/turkiye',
-        name: 'Turkiye',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/kazakhstan',
-        name: 'Kazakhstan',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/kyrgyzstan',
-        name: 'Kyrgyzstan',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/uzbekistan',
-        name: 'Uzbekistan',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/georgia',
-        name: 'Georgia',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/czech-republic',
-        name: 'CzechRepublic',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/poland',
-        name: 'Poland',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/russia',
-        name: 'Russia',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/united-arab-emirates',
-        name: 'Unoted Arab Emirates',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-    {
-        path: '/ukraine',
-        name: 'Ukraine',
-        component: () => import('@/views/BranchDetailView.vue'),
-    },
-
-    {
         path: '/reservation',
         name: 'Reservation',
         component: () => import('@/views/ReservationView.vue'),
@@ -341,7 +285,12 @@ const routes = [
         name: 'Tour to village of artisans – Lahij',
         component: () => import('@/views/LahicTourView.vue'),
 
-    }
+    },
+    {
+        path: '/:branchSlug',
+        name: 'BranchDetail',
+        component: () => import('@/views/BranchDetailView.vue'),
+    },
 
 
 
