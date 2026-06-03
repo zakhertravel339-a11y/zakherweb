@@ -1,21 +1,27 @@
 <script setup>
+import { computed, onMounted, ref } from 'vue'
+import { fetchContact } from '@/api/contact.js'
 
+const page = ref(null)
+
+const whatsappUrl = computed(() => {
+  const url = page.value?.config?.whatsapp_float_url
+  if (url) return url
+  return 'https://api.whatsapp.com/send?phone=+994502532200'
+})
+
+onMounted(async () => {
+  page.value = await fetchContact()
+})
 </script>
 
 <template>
-  
-  <a
-      href="https://api.whatsapp.com/send?phone=+994502532200&text=Salam%21%20Mövcud%20tur%20paketlar%20haqqında%20məlumat%20almaq%20istəyirəm."
-      class="float"
-      target="_blank"
-  >
-    <i class="fa fa-whatsapp my-float"></i>
+  <a :href="whatsappUrl" class="float" target="_blank" rel="noopener">
+    <i class="fa fa-whatsapp my-float" />
   </a>
 </template>
 
 <style scoped>
-
-
 .float {
   position: fixed;
   width: 60px;
