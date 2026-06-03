@@ -1,4 +1,11 @@
 import {createWebHistory, createRouter} from 'vue-router'
+const tourDetailRoute = {
+    component: () => import('@/views/TourDetailView.vue'),
+}
+
+const packageListRoute = {
+    component: () => import('@/views/PackageToursListView.vue'),
+}
 
 const routes = [
     {
@@ -49,12 +56,12 @@ const routes = [
     {
         path: '/azerbaijan-tours',
         name: 'Azerbaijan Tours',
-        component: () => import('@/views/ToursListView.vue'),
+        ...packageListRoute,
     },
     {
         path: '/shahdag',
         name: 'Gusar + Shahdag',
-        component: () => import('@/views/Shahdag.vue'),
+        ...tourDetailRoute,
     },
     {
         path: '/about-branch',
@@ -77,8 +84,7 @@ const routes = [
     {
         path: '/golf-azerbaijan',
         name: 'Golf',
-        component: () => import('@/views/GolfView.vue'),
-
+        ...tourDetailRoute,
     }
     ,
     {
@@ -99,47 +105,47 @@ const routes = [
     {
         path: '/poland-tours',
         name: 'Poland Tours',
-        component: () => import('@/views/PolandToursView.vue'),
+        ...packageListRoute,
 
     }
     ,
     {
         path: '/krakow-tour',
         name: 'Krakow Tour',
-        component: () => import('@/views/KrakowTourView.vue'),
+        ...tourDetailRoute,
 
     }
     ,
     {
         path: '/ukraine-tours',
         name: 'Ukraine Tours',
-        component: () => import('@/views/UkraineToursView.vue'),
+        ...packageListRoute,
 
     }
     ,
     {
         path: '/kyiv-tour',
         name: 'Kyiv Tour',
-        component: () => import('@/views/KiyevTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/kyrgyzstan-tours',
         name: 'Kyrgyzstan Tours',
-        component: () => import('@/views/KyrgyzstanToursView.vue'),
+        ...packageListRoute,
 
     }
     ,
     {
         path: '/bishkek-tour',
         name: 'Bishkek Tour',
-        component: () => import('@/views/BishkekTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/kazakhstan-tours',
         name: 'Kazakhstan Tours',
-        component: () => import('@/views/KazakhstanToursView.vue'),
+        ...packageListRoute,
 
     }
     ,
@@ -147,143 +153,142 @@ const routes = [
     {
         path: '/almaty-tour',
         name: 'Almaty Tour',
-        component: () => import('@/views/AlmatyTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/turkiye-tour',
         name: 'Turkiye Tour',
-        component: () => import('@/views/TurkiyetourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/turkiye-tours',
         name: 'Turkiye Tours',
-        component: () => import('@/views/TurkiyeToursView.vue'),
+        ...packageListRoute,
 
     },
     {
         path: '/uzbekistan-tour',
         name: 'Uzbekistan Tour',
-        component: () => import('@/views/UzbekistantourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/uzbekistan-tours',
         name: 'Uzbekistan Tours',
-        component: () => import('@/views/UzbekistanToursView.vue'),
+        ...packageListRoute,
 
     },
     {
         path: '/georgia-tour',
         name: 'Georgia Tour',
-        component: () => import('@/views/GeorgiaTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/georgia-tours',
         name: 'Georgia Tours',
-        component: () => import('@/views/GeorgiaToursView.vue'),
+        ...packageListRoute,
 
     },
     {
         path: '/russia-tour',
         name: 'Russia Tour',
-        component: () => import('@/views/RussiaTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/russia-tours',
         name: 'Russia Tours',
-        component: () => import('@/views/RussiaToursView.vue'),
+        ...packageListRoute,
 
     },
     {
         path: '/absheron-tour',
         name: 'Absheron Tour',
-        component: () => import('@/views/AbsheronTourView.vue'),
+        ...tourDetailRoute,
 
     }
     ,
     {
         path: '/baku-night-tour',
         name: 'Baku Nigth Tour',
-        component: () => import('@/views/BakuNightTourView.vue'),
+        ...tourDetailRoute,
 
     }
     ,
     {
         path: '/jeep-safari-tour-1',
         name: 'Extreme Jeep Safari 1 Tour',
-        component: () => import('@/views/JeepSafariTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/jeep-safari-tour-2',
         name: 'Extreme Jeep Safari 2 Tour',
-        component: () => import('@/views/JeepSafariTour2View.vue'),
+        ...tourDetailRoute,
 
     }
     ,
     {
         path: '/jeep-safari-on-the-gobustan-reserve-extreme',
         name: 'Jeep Safari on the Gobustan Reserve + Extreme',
-        component: () => import('@/views/GobustanTourView.vue'),
+        ...tourDetailRoute,
 
     } ,
     {
         path: '/jeep-safari-on-the-gobustan-reserve',
         name: 'Jeep Safari on the Gobustan Reserve',
-        component: () => import('@/views/GobustanTour2View.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/museum-gobustan-mud-volcano',
         name: 'Museum Gobustan and Mud Volcanos tour',
-        component: () => import('@/views/MudVolcanoTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/old-city-excursion',
         name: 'Old City Excursion (Walking Tour)',
-        component: () => import('@/views/OldCityTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/azerbaijani-cuisine',
         name: 'Tastes and flavors of Azerbaijani cuisine',
-        component: () => import('@/views/AzerbaijaniCuisineView.vue'),
-
+        ...tourDetailRoute,
     },
     {
         path: '/gabala-tour',
         name: 'Tour to Gabala – the capital of Caucasian Albania',
-        component: () => import('@/views/GabalaTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/khinalig-tour',
         name: 'Tour to Khinalig – 2200 meters above sea level',
-        component: () => import('@/views/KhinaligTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/sheki-tour',
         name: 'Tour to Sheki – Ancient Khanate',
-        component: () => import('@/views/ShekiTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
         path: '/quba-tour',
         name: 'Tour to the North part of Azerbaijan Forests and Mountatin Quba',
-        component: () => import('@/views/QubaTourView.vue'),
+        ...tourDetailRoute,
 
     }
     ,
     {
         path: '/lahic-tour',
         name: 'Tour to village of artisans – Lahij',
-        component: () => import('@/views/LahicTourView.vue'),
+        ...tourDetailRoute,
 
     },
     {
