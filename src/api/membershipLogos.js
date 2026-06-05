@@ -1,4 +1,5 @@
 import apiClient from './client.js'
+import { cachedGet } from './cache.js'
 import imgGta from '@/assets/images/GTA  logo 2_page-0001 (1).jpg'
 import imgTursab from '@/assets/images/tursab.png'
 import imgKato from '@/assets/images/kato.png'
@@ -16,11 +17,13 @@ export const FALLBACK_MEMBERSHIP_LOGOS = [
 ]
 
 export async function fetchMembershipLogos() {
-  try {
-    const { data } = await apiClient.get('/v1/ui/portal/membership-logo/')
-    if (Array.isArray(data) && data.length) return data
-  } catch {
-    /* fallback */
-  }
-  return FALLBACK_MEMBERSHIP_LOGOS
+  return cachedGet('membership-logos', async () => {
+    try {
+      const { data } = await apiClient.get('/v1/ui/portal/membership-logo/')
+      if (Array.isArray(data) && data.length) return data
+    } catch {
+      /* fallback */
+    }
+    return FALLBACK_MEMBERSHIP_LOGOS
+  })
 }

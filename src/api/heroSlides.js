@@ -1,6 +1,9 @@
 import apiClient from './client.js'
+import { cachedGet } from './cache.js'
 
 export async function fetchHeroSlides() {
-  const { data } = await apiClient.get('/v1/ui/portal/hero-slide/')
-  return Array.isArray(data) ? data : []
+  return cachedGet('hero-slides', async () => {
+    const { data } = await apiClient.get('/v1/ui/portal/hero-slide/')
+    return Array.isArray(data) ? data : []
+  })
 }

@@ -1,4 +1,5 @@
 import apiClient from './client.js'
+import { cachedGet } from './cache.js'
 import { getPopularToursFallback } from '@/data/popularToursFallback.js'
 
 const memoryCache = new Map()
@@ -23,15 +24,19 @@ export function getPopularToursInstant(language) {
 }
 
 async function fetchFromApi(language) {
-  const { data } = await apiClient.get('/v1/ui/portal/popular-tour/', {
-    headers: language ? { 'X-Language': language } : {},
-    timeout: 30000,
+  // Dedup concurrent callers (home page prefetch + component mount) so they
+  // share a single in-flight request instead of hitting the API twice.
+  return cachedGet(`popular-tours:${language || 'en'}`, async () => {
+    const { data } = await apiClient.get('/v1/ui/portal/popular-tour/', {
+      headers: language ? { 'X-Language': language } : {},
+      timeout: 30000,
+    })
+    if (data?.tours?.length) {
+      remember(language, data)
+      return normalizePayload(data)
+    }
+    return null
   })
-  if (data?.tours?.length) {
-    remember(language, data)
-    return normalizePayload(data)
-  }
-  return null
 }
 
 export function prefetchPopularTours(language) {

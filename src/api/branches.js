@@ -1,4 +1,5 @@
 import apiClient from './client.js'
+import { cachedGet } from './cache.js'
 
 import flagAze from '../assets/images/flag-aze.jpg'
 import flagTur from '../assets/images/turkiye-flag.png'
@@ -27,11 +28,13 @@ export const FALLBACK_BRANCHES = [
 ]
 
 export async function fetchBranches() {
-  try {
-    const { data } = await apiClient.get('/v1/ui/portal/branch/')
-    if (Array.isArray(data) && data.length) return data
-  } catch (_) {
-    /* fallback */
-  }
-  return FALLBACK_BRANCHES
+  return cachedGet('branches', async () => {
+    try {
+      const { data } = await apiClient.get('/v1/ui/portal/branch/')
+      if (Array.isArray(data) && data.length) return data
+    } catch (_) {
+      /* fallback */
+    }
+    return FALLBACK_BRANCHES
+  })
 }

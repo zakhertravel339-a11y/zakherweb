@@ -68,6 +68,9 @@ function writeLangCache(lang, apiData) {
     }
 }
 
+// Dedup concurrent network refreshes for the same language.
+const inflightTranslations = new Map()
+
 export const useI18nStore = defineStore('i18n', () => {
     const initialLang = readStoredLanguage()
     const cachedApi = readLangCache(initialLang)
@@ -105,9 +108,14 @@ export const useI18nStore = defineStore('i18n', () => {
         }
 
         try {
-            const { data } = await apiClient.get('/v1/ui/portal/translation/', {
-                headers: { 'X-Language': lang },
-            })
+            let request = inflightTranslations.get(lang)
+            if (!request) {
+                request = apiClient
+                    .get('/v1/ui/portal/translation/', { headers: { 'X-Language': lang } })
+                    .finally(() => inflightTranslations.delete(lang))
+                inflightTranslations.set(lang, request)
+            }
+            const { data } = await request
             if (data && typeof data === 'object' && Object.keys(data).length > 0) {
                 applyMessages(lang, data)
                 writeLangCache(lang, data)
