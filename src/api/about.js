@@ -13,12 +13,12 @@ export async function fetchAboutContent(language) {
 }
 
 export async function fetchAboutEvents(language) {
-  try {
-    const { data } = await apiClient.get('/v1/ui/portal/about/events/', {
-      headers: language ? { 'X-Language': language } : {},
-    })
-    return data
-  } catch {
-    return getAboutFallback().events
+  const { data } = await apiClient.get('/v1/ui/portal/about/events/', {
+    headers: language ? { 'X-Language': language } : {},
+    timeout: 90000,
+  })
+  if (!data || !Array.isArray(data.events)) {
+    throw new Error('Invalid about events response')
   }
+  return data
 }

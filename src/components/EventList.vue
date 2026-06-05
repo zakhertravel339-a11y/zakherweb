@@ -5,6 +5,8 @@ import { useI18nStore } from '@/store/i18nStore.js'
 
 const i18n = useI18nStore()
 const page = ref(null)
+const loading = ref(true)
+const loadError = ref(false)
 const lightboxOpen = ref(false)
 const lightboxSrc = ref('')
 lightboxSrc.value = ''
@@ -16,7 +18,16 @@ const events = computed(() => page.value?.events || [])
 const pageTitle = computed(() => page.value?.page_title || 'Our Events')
 
 async function load() {
-  page.value = await fetchAboutEvents(i18n.language)
+  loading.value = true
+  loadError.value = false
+  try {
+    page.value = await fetchAboutEvents(i18n.language)
+  } catch {
+    page.value = { page_title: 'Our Events', events: [] }
+    loadError.value = true
+  } finally {
+    loading.value = false
+  }
 }
 
 function openLightbox(media, clickedIndex) {
@@ -74,6 +85,11 @@ watch(() => i18n.language, load)
       <h2 class="title-events">{{ pageTitle }}</h2>
       <hr />
     </div>
+
+    <p v-if="loading" class="events-status">Loading events...</p>
+    <p v-else-if="loadError && !events.length" class="events-status events-status--error">
+      Events could not be loaded. Please refresh the page.
+    </p>
 
     <section
       v-for="(event, idx) in events"
@@ -143,6 +159,14 @@ hr {
 .event__desc {
   margin-bottom: 12px;
   color: #444;
+}
+.events-status {
+  text-align: center;
+  color: #666;
+  margin: 24px 0;
+}
+.events-status--error {
+  color: #c62828;
 }
 .gallery {
   display: grid;
